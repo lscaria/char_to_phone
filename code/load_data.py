@@ -48,18 +48,18 @@ labels_onehot = tf.one_hot(label, 86)
 #seq_in = tf.placeholder(tf.float32,[None])
 output = basic_model(token,label)
 pred = tf.argmax(output, axis=2)
-loss = tf.losses.mean_squared_error(labels=label, predictions=pred)
+loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels_onehot, logits=output)
 cost = tf.reduce_mean(loss)
 updates = tf.train.AdamOptimizer(1e-4).minimize(cost)
 with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
-	for i in range(1000):
+	for i in range(20000):
 		labels,tokens,preds,_,out_loss = sess.run([label,token,pred,updates,cost])
 		#print('ouptut' ,labels.shape)
 		#print(preds)
 		print(out_loss)
 
-		if i ==999:
+		if i ==19999:
 			char_to_id, id_to_char = create_tfrecords.create_mapping(list(VALID_ALPHABET))
 			phone_to_id, id_to_phone = create_tfrecords.create_mapping(list(VALID_PHONES))
 			for words, phonemes,prediction in zip(tokens, labels,preds):
