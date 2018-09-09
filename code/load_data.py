@@ -27,20 +27,20 @@ def parse_function(tf_example):
 
 
 
-def load_tfrecords(filename):
+def load_tfrecords(filename, batch_size):
 
 	#filename = ['../data/processed/train.tfrecords']
 
 	dataset = tf.data.TFRecordDataset(filename)
 	dataset = dataset.map(parse_function)
-	dataset = dataset.padded_batch(10, padded_shapes=([],[None],[None]))
-	dataset = dataset.filter(lambda t,y,s: tf.equal(tf.shape(y)[0], 10))
+	dataset = dataset.padded_batch(batch_size, padded_shapes=([],[None],[None]))
+	dataset = dataset.filter(lambda t,y,s: tf.equal(tf.shape(y)[0], batch_size))
 	dataset = dataset.repeat()
 	iterator = dataset.make_initializable_iterator()
 	return iterator
 
 	#return iterator.get_next()
-batch_size = 10
+batch_size = 32
 
 filename = tf.placeholder(tf.string, shape=[None])
 iterator = load_tfrecords(filename)
