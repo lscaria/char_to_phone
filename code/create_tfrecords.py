@@ -1,13 +1,14 @@
 import tensorflow as tf
 
 
-VALID_ALPHABET =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ'"
+VALID_ALPHABET =  "-ABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 START_PHONE = '\t'
 END_PHONE = '\n'
+PAD_PHONE= '\p'
 cmu_dict_path = "../data/cmudict-0.7b.txt"
 cmu_symbols_path = "../data/cmudict-0.7b.symbols.txt"
 with open(cmu_symbols_path) as file:
-	VALID_PHONES= [START_PHONE] + [line.strip() for line in file] +[END_PHONE]
+	VALID_PHONES= [PAD_PHONE]+[START_PHONE] + [line.strip() for line in file] +[END_PHONE]
 	print(len(VALID_PHONES))
 
 
@@ -47,15 +48,15 @@ def load_data():
 
 
 def create_mapping(chars):
-    char_to_id = {c: i+1 for i, c in enumerate(chars)} 
-    id_to_char = {i+1: c for i, c in enumerate(chars)}
+    char_to_id = {c: i for i, c in enumerate(chars)} 
+    id_to_char = {i: c for i, c in enumerate(chars)}
     return char_to_id, id_to_char
 
 def make_example(sequence, labels):
     # The object we return
     ex = tf.train.SequenceExample()
     # A non-sequential feature of our example
-    sequence_length = len(sequence)+1
+    sequence_length = len(labels)
     ex.context.feature["length"].int64_list.value.append(sequence_length)
     # Feature lists for the two sequential features of our example
     fl_tokens = ex.feature_lists.feature_list["tokens"]
@@ -79,6 +80,8 @@ def create_tfrecord(split_list, wordtophone, split):
 		#print(word_seq)
 
 		for pronounciation in wordtophone[word]:
+			
+			pronounciation = pronounciation +" "+  END_PHONE
 			#print(pronounciation)
 			pr_seq = [phone_to_id[phone] for phone in pronounciation.split(' ')]
 
@@ -93,7 +96,7 @@ def main():
 
 
 	keys = list(wordtophone.keys())
-	keys = keys[0:100]
+	#keys = keys[0:100]
 
 	size = len(keys)
 	train_set = keys[:int(size*0.8)]
