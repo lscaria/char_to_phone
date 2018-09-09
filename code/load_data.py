@@ -43,7 +43,7 @@ def load_tfrecords(filename, batch_size):
 batch_size = 32
 
 filename = tf.placeholder(tf.string, shape=[None])
-iterator = load_tfrecords(filename)
+iterator = load_tfrecords(filename,32)
 #length, token, label = load_tfrecords(filename)
 length, token, label = iterator.get_next()
 labels_onehot = tf.one_hot(label, 86)
@@ -60,7 +60,7 @@ with tf.Session() as sess:
 	sess.run(iterator.initializer,feed_dict={filename:train_filename})
 
 	
-	for i in range(10000):
+	for i in range(20000):
 		labels,tokens,preds,_,out_loss = sess.run([label,token,pred,updates,cost])
 		#print('ouptut' ,labels.shape)
 		#print(preds)
