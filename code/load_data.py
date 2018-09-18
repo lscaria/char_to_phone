@@ -1,6 +1,7 @@
 import tensorflow as tf 
 import create_tfrecords 
 from models import basic_model, encoder_model
+from utils import is_correct
 VALID_ALPHABET = create_tfrecords.VALID_ALPHABET
 VALID_PHONES = create_tfrecords.VALID_PHONES
 
@@ -39,6 +40,24 @@ def load_tfrecords(filename, batch_size):
 	iterator = dataset.make_initializable_iterator()
 	return iterator
 
+
+
+char_to_id, id_to_char = create_tfrecords.create_mapping(list(VALID_ALPHABET))
+phone_to_id, id_to_phone = create_tfrecords.create_mapping(list(VALID_PHONES))
+
+
+def get_batch_accuracy(tokens, labels, preds):
+	num_correct = 0 
+	for words, phonemes,prediction in zip(tokens, labels,preds):
+	#print(words)
+		word_seq = [id_to_char[i] for i in words if i!=0]
+		phone_seq =[id_to_phone[i] for i in phonemes if i!=0]
+		pred_seq =[id_to_phone[i] for i in prediction if i!=0]
+		#print(word_seq, phone_seq,pred_seq)
+		if is_correct("".join(word_seq), " ".join(pred_seq)):
+			num_correct +=1
+	return num_correct/len(tokens)
+
 	#return iterator.get_next()
 batch_size = 32
 
@@ -66,13 +85,10 @@ with tf.Session() as sess:
 		#print(preds)
 		print(out_loss)
 
-		if i ==9999:
-			char_to_id, id_to_char = create_tfrecords.create_mapping(list(VALID_ALPHABET))
-			phone_to_id, id_to_phone = create_tfrecords.create_mapping(list(VALID_PHONES))
-			for words, phonemes,prediction in zip(tokens, labels,preds):
-				#print(words)
-				word_seq = [id_to_char[i] for i in words if i!=0]
-				phone_seq =[id_to_phone[i] for i in phonemes if i!=0]
-				pred_seq =[id_to_phone[i] for i in prediction if i!=0]
-				print(word_seq, phone_seq,pred_seq)
+		if i%100:
+			print(get_batch_accuracy(tokens, labels, preds))
+
+		if i ==19999:
+
+			print('Dev Accuracy = ')
 		
