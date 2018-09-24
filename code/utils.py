@@ -58,10 +58,13 @@ CHAR_TO_ID, ID_TO_CHAR = create_mapping(list(VALID_ALPHABET))
 
 def is_correct(word, pronounciation):
 
+	pronounciation = pronounciation.strip()
+
 	correct_pronounciations = word_to_phone_dict[word]
-	#print(correct_pronounciations)
+	print(correct_pronounciations, pronounciation)
 	for correct_pronons in correct_pronounciations:
-		if pronounciation == correct_pronounciations:
+		if pronounciation == correct_pronons:
+			print('true')
 			return True
 
 	return False

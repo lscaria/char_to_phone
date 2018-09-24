@@ -1,6 +1,6 @@
 import tensorflow as tf 
 import create_tfrecords 
-from models import basic_model, encoder_model
+from models import basic_model, encoder_model, inference_model
 from utils import is_correct
 VALID_ALPHABET = create_tfrecords.VALID_ALPHABET
 VALID_PHONES = create_tfrecords.VALID_PHONES
@@ -48,15 +48,17 @@ phone_to_id, id_to_phone = create_tfrecords.create_mapping(list(VALID_PHONES))
 
 def get_batch_accuracy(tokens, labels, preds):
 	num_correct = 0 
+	output = []
 	for words, phonemes,prediction in zip(tokens, labels,preds):
 	#print(words)
 		word_seq = [id_to_char[i] for i in words if i!=0]
 		phone_seq =[id_to_phone[i] for i in phonemes if i!=0]
 		pred_seq =[id_to_phone[i] for i in prediction if i!=0]
 		#print(word_seq, phone_seq,pred_seq)
+		output.append([word_seq, phone_seq, pred_seq])
 		if is_correct("".join(word_seq), " ".join(pred_seq)):
 			num_correct +=1
-	return num_correct/len(tokens)
+	return num_correct/len(tokens), output
 
 	#return iterator.get_next()
 batch_size = 32
@@ -69,7 +71,9 @@ labels_onehot = tf.one_hot(label, 86)
 #seq_in = tf.reshape(token, [32,-1])
 #seq_in = tf.placeholder(tf.float32,[None])
 output = encoder_model(token,label, length, batch_size)
+infer_output = inference_model(token, label, length, batch_size)
 pred = tf.argmax(output, axis=2)
+#infer_pred = tf.argmax(infer_output, axis=2)
 loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=output)
 cost = tf.reduce_mean(loss)
 updates = tf.train.AdamOptimizer(1e-4).minimize(cost)
@@ -79,16 +83,31 @@ with tf.Session() as sess:
 	sess.run(iterator.initializer,feed_dict={filename:train_filename})
 
 	
-	for i in range(20000):
+	for i in range(100000):
 		labels,tokens,preds,_,out_loss = sess.run([label,token,pred,updates,cost])
 		#print('ouptut' ,labels.shape)
 		#print(preds)
-		print(out_loss)
+		#print(out_loss)
 
-		if i%100:
-			print(get_batch_accuracy(tokens, labels, preds))
+		if i%100==0:
 
-		if i ==19999:
+			accuracy, preds = get_batch_accuracy(tokens, labels, preds)
+			print("Loss", out_loss)
+			print("Accuracy", accuracy)
 
-			print('Dev Accuracy = ')
+			if i%1000==0:
+				infered = sess.run(infer_output)
+				print('Dev Accuracy = ')
+				accuracy, preds = get_batch_accuracy(tokens, labels, infered)
+				print("infered accuracy", accuracy)
+				#print("infered preds", preds)
+
+				#print(accuracy)
+				#print(preds)
+
+		if i ==99999:
+			accuracy, preds = get_batch_accuracy(tokens, labels, preds)
+			print("Loss", out_loss)
+			print("Accuracy", accuracy)
+			
 		
