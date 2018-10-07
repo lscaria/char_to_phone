@@ -61,10 +61,10 @@ def is_correct(word, pronounciation):
 	pronounciation = pronounciation.strip()
 
 	correct_pronounciations = word_to_phone_dict[word]
-	print(correct_pronounciations, pronounciation)
+	#print(correct_pronounciations, pronounciation)
 	for correct_pronons in correct_pronounciations:
 		if pronounciation == correct_pronons:
-			print('true')
+			#print('true')
 			return True
 
 	return False

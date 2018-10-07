@@ -81,9 +81,10 @@ def create_tfrecord(split_list, wordtophone, split):
 
 		for pronounciation in wordtophone[word]:
 			
-			pronounciation = pronounciation +" "+  END_PHONE
+			pronounciation = pronounciation 
 			#print(pronounciation)
 			pr_seq = [phone_to_id[phone] for phone in pronounciation.split(' ')]
+			pr_seq.append(phone_to_id[END_PHONE])
 
 			ex = make_example(word_seq, pr_seq)
 			writer.write(ex.SerializeToString())
@@ -96,7 +97,7 @@ def main():
 
 
 	keys = list(wordtophone.keys())
-	#keys = keys[0:100]
+	keys = keys[0:1000]
 
 	size = len(keys)
 	train_set = keys[:int(size*0.8)]
