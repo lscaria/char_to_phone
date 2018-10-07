@@ -1,2 +1,3 @@
 # char_to_phone
-character to phoneme RNN
+
+Seq2Seq model for character to phoneme conversion. 
