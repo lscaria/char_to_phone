@@ -69,6 +69,19 @@ def is_correct(word, pronounciation):
 
 	return False
 
+def get_batch_accuracy(tokens, labels, preds):
+	num_correct = 0 
+	output = []
+	for words, phonemes,prediction in zip(tokens, labels,preds):
+	#print(words)
+		word_seq = [ID_TO_CHAR[i] for i in words if i!=0]
+		phone_seq =[ID_TO_PHONE[i] for i in phonemes if i!=0]
+		pred_seq =[ID_TO_PHONE[i] for i in prediction if i!=0]
+		output.append([word_seq, phone_seq, pred_seq])
+		if is_correct("".join(word_seq), " ".join(pred_seq)):
+			num_correct +=1
+	return num_correct/len(tokens), output
+
 if __name__ == '__main__':
 	pr = ['F', 'L', 'IH1', 'T', 'IH1', 'SH', 'AH0', 'N', '\n']
 	pro = " ".join(pr)
