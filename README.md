@@ -3,9 +3,9 @@
 This repo contains a simple Seq2Seq model for character to phoneme conversion. 
 
 ## Preprocessing:
-We use the [CMU pronouncation dictionary](http://www.speech.cs.cmu.edu/cgi-bin/cmudict) as the input dataset. All files can be found in the data folder.
+The [CMU pronouncation dictionary](http://www.speech.cs.cmu.edu/cgi-bin/cmudict) is used as the input dataset. All files can be found in the data folder.
 
-We use TfRecords as the input to our seq2seq model. Each Record Example contains a word, the phoneme conversion, and the length of the conversion. 
+The CMU dictionary is then transformed to tfRecords for the input to our seq2seq model. Each tfRecord Example contains a word, the phoneme conversion, and the length of the conversion. 
 
 To create the processed dataset, run the below line, which will create train, dev, and test splits.
 
