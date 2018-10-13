@@ -25,7 +25,7 @@ The training, automatically updates the checkpoint file at the end of each epoch
 ```
 restore = True
 ```
-otherwise it will start trianing a new model.
+otherwise it will start training a new model.
 
 
 ## Inference:
