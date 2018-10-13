@@ -37,6 +37,6 @@ python test.py
 As of now you have to manually update the word argument in line 25 to be the word you want the model to run inference on. This will change to a commandline interface soon.
 
 ## Acknowledgments:
-I made this small project because I wanted a more clear understanding of seq2seq models and I couldn't finda tutorial which showed a simple version with different train, dev, and test graphs as the Tensorflow NMT tutorial shows. Additionally I wanted an updated tutorial which took advantage of the tf.data libaries. 
+I created this project because I wanted a clearer understanding of seq2seq models and I was unable to find a tutorial which showed a simple version with different train, dev, and test graphs as the Tensorflow NMT tutorial shows. Additionally I wanted an updated tutorial which took advantage of the tf.data libaries. 
 
 This small repo was inspired by the [Prononcing English Gradients](https://www.kaggle.com/reppic/predicting-english-pronunciations/notebook) kaggle notebook, with elements from the Tensorflow [NMT Tutorial](https://github.com/tensorflow/nmt/blob/master/nmt/model.py) and [Park Chansung's Medium](https://towardsdatascience.com/seq2seq-model-in-tensorflow-ec0c557e560f) post
